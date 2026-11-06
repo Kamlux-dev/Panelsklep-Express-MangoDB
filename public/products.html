@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sklep - produkty</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <nav>
+        <a href="/">Strona główna</a>
+        <a href="products.html">Produkty</a>
+        <a href="users.html">Użytkownicy</a>
+        <a href="orders.html">Zamówienia</a>
+    </nav>
+
+    <h1>Produkty</h1>
+
+    <form id="form">
+        <input type="hidden" id="id">
+        <input type="text" id="name" placeholder="Nazwa" required>
+        <input type="number" id="price" placeholder="Cena" step="0.01" required>
+        <button type="submit">Zapisz</button>
+    </form>
+
+    <div class="produkty" id="list">
+
+    </div>
+
+    <script>
+        async function loadProducts(){
+            const res = await fetch('/api/products/');
+            const products = await res.json();
+            const list = document.getElementById('list');
+            list.innerHTML = '';
+            products.forEach(p => {
+                list.innerHTML += `
+                    <div class="produkt">
+                    <h3>${p.name}</h3>
+                    <p>${p.price} zł</p>
+                    <button onclick="show('${p._id}')">Pokaż</button>
+                    <button onclick="edit('${p._id}')">Edytuj</button>
+                <button onclick="remove('${p._id}')">Usuń</button>
+            </div>`;
+            });
+        }
+
+        async function show(id){
+            const res = await fetch('/api/products/' + id);
+            const p = await res.json();
+            alert(`Nazwa: ${p.name}\nCena: ${p.price} zł`);
+        }
+
+        async function edit(id){
+            const res = await fetch('/api/products/' + id);
+            const p = await res.json();
+            document.getElementById('id').value = p._id;
+            document.getElementById('name').value = p.name;
+            document.getElementById('price').value = p.price;
+        }
+
+        async function remove(id){
+            await fetch('/api/products/' + id, {
+                method: 'DELETE'
+            });
+            loadProducts();
+        }
+
+        document.getElementById('form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const id = document.getElementById('id').value;
+            const product = {
+                name: document.getElementById('name').value,
+                price: document.getElementById('price').value
+            };
+
+            if(id){
+                await fetch('/api/products/' + id, {
+                    method: 'PUT',
+                    headers:{
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(product)
+                });
+            } else{
+                await fetch('/api/products', {
+                    method: 'POST',
+                    headers:{
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(product)
+                });
+            }
+
+            document.getElementById('form').reset();
+            document.getElementById('id').value = '';
+            loadProducts();
+        });
+
+        loadProducts();
+    </script>
+
+</body>
+</html>

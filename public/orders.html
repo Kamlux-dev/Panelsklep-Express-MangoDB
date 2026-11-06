@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sklep - zamówienia</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <nav>
+        <a href="/">Strona główna</a>
+        <a href="products.html">Produkty</a>
+        <a href="users.html">Użytkownicy</a>
+        <a href="orders.html">Zamówienia</a>
+    </nav>
+
+    <h1>Zamówienia</h1>
+
+    <form id="form">
+        <input type="hidden" id="id">
+        <select id="userId" required></select>
+        <select id="productId" required></select>
+        <input type="number" id="quantity" value="1" min="1" required>
+        <button type="submit">Zapisz</button>
+    </form>
+
+    <div class="zamowienia" id="list">
+
+    </div>
+
+    <script>
+        let users = [];
+        let products = [];
+
+        async function loadSelects(){
+            const resUsers = await fetch('/api/users');
+            users = await resUsers.json();
+
+            const resProducts = await fetch('/api/products');
+            products = await resProducts.json();
+
+            const userSelect = document.getElementById('userId');
+            userSelect.innerHTML = '';
+            users.forEach(u => {
+                userSelect.innerHTML += `<option value="${u._id}">${u.name}</option>`;
+            });
+
+            const productSelect = document.getElementById('productId');
+            productSelect.innerHTML = '';
+            products.forEach(p => {
+                productSelect.innerHTML += `<option value="${p._id}">${p.name}</option>`;
+            });
+        }
+
+        async function loadOrders(){
+            const res = await fetch('/api/orders');
+            const orders = await res.json();
+            const list = document.getElementById('list');
+            list.innerHTML = '';
+            orders.forEach(o => {
+                const user = users.find(u => u._id === o.userId);
+                const product = products.find(p => p._id === o.productId);
+
+                list.innerHTML += `
+                    <div class="zamowienie">
+                        <h3>${user ? user.name : '-'}</h3>
+                        <p>${product ? product.name : '-'} x ${o.quantity}</p>
+                        <p>Razem: ${product ? product.price * o.quantity : 0} zł</p>
+                        <button onclick="show('${o._id}')">Pokaż</button>
+                        <button onclick="edit('${o._id}')">Edytuj</button>
+                        <button onclick="remove('${o._id}')">Usuń</button>
+                    </div>`;
+            });
+        }
+
+        async function show(id){
+            const res = await fetch('/api/orders/' + id);
+            const o = await res.json();
+            const user = users.find(u => u._id === o.userId);
+            const product = products.find(p => p._id === o.productId);
+            alert(`Użytkownik: ${user.name}\nProdukt: ${product.name}\nIlość: ${o.quantity}`);
+        }
+
+        async function edit(id){
+            const res = await fetch('/api/orders/' + id);
+            const o = await res.json();
+            document.getElementById('id').value = o._id;
+            document.getElementById('userId').value = o.userId;
+            document.getElementById('productId').value = o.productId;
+            document.getElementById('quantity').value = o.quantity;
+        }
+
+        async function remove(id){
+            await fetch('/api/orders/' + id, {
+                method: 'DELETE'
+            });
+            loadOrders();
+        }
+
+        document.getElementById('form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const id = document.getElementById('id').value;
+            const order = {
+                userId: document.getElementById('userId').value,
+                productId: document.getElementById('productId').value,
+                quantity: document.getElementById('quantity').value
+            };
+
+            if(id){
+                await fetch('/api/orders/' + id, {
+                    method: 'PUT',
+                    headers:{
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(order)
+                });
+            } else{
+                await fetch('/api/orders', {
+                    method: 'POST',
+                    headers:{
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(order)
+                });
+            }
+
+            document.getElementById('form').reset();
+            document.getElementById('id').value = '';
+            loadOrders();
+        });
+
+        async function start(){
+            await loadSelects();
+            loadOrders();
+        }
+
+        start();
+    </script>
+</body>
+</html>
