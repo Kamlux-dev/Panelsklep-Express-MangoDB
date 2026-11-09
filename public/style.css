@@ -1,21 +1,112 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+
 body {
-    font-family: Arial, sans-serif;
-    margin: 0 30px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 1rem;
+    margin: 0 0 3rem;
+    color: hsl(45, 4%, 35%);
+    background: hsl(45, 0%, 98%);
+}
+
+h1 {
+    text-align: center;
+    color: hsl(45, 4%, 15%);
+    font-size: 1.75rem;
+    font-weight: 600;
+    margin: 2rem 0 1.5rem;
+}
+
+h3 {
+    color: hsl(45, 4%, 15%);
+    font-size: 1.25rem;
+    font-weight: 600;
 }
 
 nav {
-    background: #2c3e50;
-    padding: 15px;
-    margin: 0 -30px 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    column-gap: 2rem;
+    height: 3.5rem;
+    background: #dd900a;
+    margin-bottom: 2rem;
 }
 
 nav a {
     color: white;
-    margin-right: 20px;
     text-decoration: none;
+    font-weight: 600;
+    font-size: .938rem;
 }
 
-input, select, button {
-    padding: 6px;
-    margin: 5px 5px 15px 0;
+form {
+    max-width: 700px;
+    margin: 0 auto 2.5rem;
+    padding: 2rem 1.5rem;
+    background: #fff;
+    border-radius: 1rem;
+    box-shadow: 0 2px 6px hsla(45, 100%, 15%, 0.15);
+    text-align: center;
+}
+
+input, select {
+    padding: .75rem;
+    margin: .5rem .5rem 1rem 0;
+    border: 1px solid hsl(45, 4%, 85%);
+    border-radius: .5rem;
+    font-family: inherit;
+    font-size: .938rem;
+}
+
+input:focus, select:focus {
+    outline: none;
+    border-color: #dd900a;
+}
+
+button {
+    padding: .75rem 1.5rem;
+    border: none;
+    border-radius: 3rem;
+    background: #dd900a;
+    color: white;
+    font-family: inherit;
+    font-weight: 600;
+    font-size: .938rem;
+    cursor: pointer;
+    transition: .3s;
+}
+
+button:hover {
+    background: #c47e08;
+}
+
+.produkty, .uzytkownicy, .zamowienia {
+    max-width: 900px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 1.5rem;
+}
+
+.produkt, .uzytkownik, .zamowienie {
+    background: #fff;
+    border-radius: 1rem;
+    box-shadow: 0 2px 6px hsla(45, 100%, 15%, 0.15);
+    padding: 2rem 1.5rem;
+    text-align: center;
+}
+
+.produkt h3, .uzytkownik h3, .zamowienie h3 {
+    margin-bottom: .5rem;
+}
+
+.produkt p, .uzytkownik p, .zamowienie p {
+    margin-bottom: .5rem;
+    color: hsl(45, 4%, 35%);
+}
+
+.produkt button, .uzytkownik button, .zamowienie button {
+    margin-top: .75rem;
+    padding: .5rem 1rem;
+    font-size: .813rem;
 }
