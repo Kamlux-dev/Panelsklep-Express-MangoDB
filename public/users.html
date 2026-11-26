@@ -5,13 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sklep - użytkownicy</title>
     <link rel="stylesheet" href="style.css">
+    <script src="theme.js"></script>
 </head>
 <body>
     <nav>
-        <a href="/">Strona główna</a>
-        <a href="products.html">Produkty</a>
-        <a href="users.html">Użytkownicy</a>
-        <a href="orders.html">Zamówienia</a>
+        <div class="nav-links">
+            <a href="/">Strona główna</a>
+            <a href="products.html">Produkty</a>
+            <a href="users.html">Użytkownicy</a>
+            <a href="orders.html">Zamówienia</a>
+            <a href="admins.html" class="admin-only">Konta panelu</a>
+        </div>
+        <div class="nav-user">
+            <button id="themeToggle" class="theme-toggle" onclick="toggleTheme()" title="Zmień motyw">🌙</button>
+            <span id="currentAdmin"></span>
+            <a href="#" onclick="logout(); return false;">Wyloguj</a>
+        </div>
     </nav>
 
     <h1>Użytkownicy</h1>
@@ -27,7 +36,19 @@
 
     </div>
 
+    <script src="auth.js"></script>
     <script>
+        let isAdmin = true;
+
+        async function loadRole(){
+            const res = await fetch('/api/auth/me');
+            const me = await res.json();
+            isAdmin = me.role === 'admin';
+            if(!isAdmin){
+                document.getElementById('form').style.display = 'none';
+            }
+        }
+
         async function loadUsers(){
             const res = await fetch('/api/users');
             const users = await res.json();
@@ -39,8 +60,8 @@
                         <h3>${u.name}</h3>
                         <p>${u.email}</p>
                         <button onclick="show('${u._id}')">Pokaż</button>
-                        <button onclick="edit('${u._id}')">Edytuj</button>
-                        <button onclick="remove('${u._id}')">Usuń</button>
+                        ${isAdmin ? `<button onclick="edit('${u._id}')">Edytuj</button>
+                        <button onclick="remove('${u._id}')">Usuń</button>` : ''}
                     </div>`;
             });
         }
@@ -98,7 +119,12 @@
             loadUsers();
         });
 
-        loadUsers();
+        async function start(){
+            await loadRole();
+            loadUsers();
+        }
+
+        start();
     </script>
 </body>
 </html>

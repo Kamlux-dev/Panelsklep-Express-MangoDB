@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sklep - konta panelu</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="theme.js"></script>
+</head>
+<body>
+    <nav>
+        <div class="nav-links">
+            <a href="/">Strona główna</a>
+            <a href="products.html">Produkty</a>
+            <a href="users.html">Użytkownicy</a>
+            <a href="orders.html">Zamówienia</a>
+            <a href="admins.html" class="admin-only">Konta panelu</a>
+        </div>
+        <div class="nav-user">
+            <button id="themeToggle" class="theme-toggle" onclick="toggleTheme()" title="Zmień motyw">🌙</button>
+            <span id="currentAdmin"></span>
+            <a href="#" onclick="logout(); return false;">Wyloguj</a>
+        </div>
+    </nav>
+
+    <h1>Konta panelu</h1>
+
+    <div class="uzytkownicy" id="list"></div>
+
+    <script src="auth.js"></script>
+    <script>
+        async function loadAdmins(){
+            const res = await fetch('/api/admins');
+            const list = document.getElementById('list');
+            if (!res.ok) {
+                list.innerHTML = '<p style="text-align:center;grid-column:1/-1">Brak uprawnień</p>';
+                return;
+            }
+            const admins = await res.json();
+            list.innerHTML = '';
+            admins.forEach(a => {
+                list.innerHTML += `
+                    <div class="uzytkownik">
+                        <h3>${a.email}</h3>
+                        <p>Rola: ${a.role}</p>
+                    </div>`;
+            });
+        }
+
+        loadAdmins();
+    </script>
+</body>
+</html>

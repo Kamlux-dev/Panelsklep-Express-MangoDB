@@ -4,6 +4,14 @@ const { getDb } = require('../db');
 
 const router = express.Router();
 
+// Tylko admin może dodawać/edytować/usuwać użytkowników
+function requireAdmin(req, res, next) {
+    if (req.session.role !== 'admin') {
+        return res.status(403).json({ message: 'Brak uprawnień' });
+    }
+    next();
+}
+
 router.get('/', async (req, res) => {
     const users = await getDb().collection('users').find().toArray();
     res.json(users);
@@ -17,7 +25,7 @@ router.get('/:id', async (req, res) => {
     res.json(user);
 });
 
-router.post('/', async (req, res) => {
+router.post('/', requireAdmin, async (req, res) => {
     const user = {
         name: req.body.name,
         email: req.body.email
@@ -26,7 +34,7 @@ router.post('/', async (req, res) => {
     res.status(201).json(user);
 });
 
-router.put('/:id', async (req, res) => {
+router.put('/:id', requireAdmin, async (req, res) => {
     await getDb().collection('users').updateOne(
         { _id: new ObjectId(req.params.id) },
         { $set: { name: req.body.name, email: req.body.email } }
@@ -34,7 +42,7 @@ router.put('/:id', async (req, res) => {
     res.json({ message: 'OK' });
 });
 
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', requireAdmin, async (req, res) => {
     await getDb().collection('users').deleteOne({ _id: new ObjectId(req.params.id) });
     res.status(204).send();
 });

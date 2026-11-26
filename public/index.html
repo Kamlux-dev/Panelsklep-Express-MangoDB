@@ -5,15 +5,57 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sklep</title>
     <link rel="stylesheet" href="style.css">
+    <script src="theme.js"></script>
 </head>
 <body>
     <nav>
-        <a href="/">Strona główna</a>
-        <a href="/products.html">Produkty</a>
-        <a href="/users.html">Użytkownicy</a>
-        <a href="/orders.html">Zamówienia</a>
+        <div class="nav-links">
+            <a href="/">Strona główna</a>
+            <a href="/products.html">Produkty</a>
+            <a href="/users.html">Użytkownicy</a>
+            <a href="/orders.html">Zamówienia</a>
+            <a href="/admins.html" class="admin-only">Konta panelu</a>
+        </div>
+        <div class="nav-user">
+            <button id="themeToggle" class="theme-toggle" onclick="toggleTheme()" title="Zmień motyw" aria-label="Zmień motyw"></button>
+            <span id="currentAdmin"></span>
+            <a href="#" onclick="logout(); return false;">Wyloguj</a>
+        </div>
     </nav>
 
-    <h1>Panel sklep</h1>
+    <h1>Panel sklepu</h1>
+
+    <div class="produkty">
+        <div class="produkt">
+            <h3 id="productsCount">0</h3>
+            <p>Produkty</p>
+            <a href="/products.html"><button>Zarządzaj</button></a>
+        </div>
+        <div class="produkt">
+            <h3 id="usersCount">0</h3>
+            <p>Użytkownicy</p>
+            <a href="/users.html"><button>Zarządzaj</button></a>
+        </div>
+        <div class="produkt">
+            <h3 id="ordersCount">0</h3>
+            <p>Zamówienia</p>
+            <a href="/orders.html"><button>Zarządzaj</button></a>
+        </div>
+    </div>
+
+    <script src="auth.js"></script>
+    <script>
+        async function loadStats(){
+            const [products, users, orders] = await Promise.all([
+                fetch('/api/products').then(r => r.json()),
+                fetch('/api/users').then(r => r.json()),
+                fetch('/api/orders').then(r => r.json())
+            ]);
+            document.getElementById('productsCount').textContent = products.length;
+            document.getElementById('usersCount').textContent = users.length;
+            document.getElementById('ordersCount').textContent = orders.length;
+        }
+        loadStats();
+    </script>
 </body>
 </html>

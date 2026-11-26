@@ -24,12 +24,18 @@ h3 {
 
 nav {
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
-    column-gap: 2rem;
     height: 3.5rem;
+    padding: 0 2rem;
     background: #dd900a;
     margin-bottom: 2rem;
+}
+
+.nav-links, .nav-user {
+    display: flex;
+    align-items: center;
+    column-gap: 2rem;
 }
 
 nav a {
@@ -37,6 +43,30 @@ nav a {
     text-decoration: none;
     font-weight: 600;
     font-size: .938rem;
+}
+
+.nav-user span {
+    color: white;
+    font-size: .875rem;
+    opacity: .9;
+}
+
+.login-form {
+    max-width: 360px;
+}
+
+.login-form input {
+    display: block;
+    width: 100%;
+    margin: 0 0 1rem;
+    box-sizing: border-box;
+}
+
+.error {
+    color: #c0392b;
+    font-size: .875rem;
+    margin: 1rem 0 0;
+    min-height: 1.2rem;
 }
 
 form {
@@ -109,4 +139,56 @@ button:hover {
     margin-top: .75rem;
     padding: .5rem 1rem;
     font-size: .813rem;
+}
+
+.theme-toggle {
+    background: transparent;
+    padding: 0;
+    color: #fff;
+    display: inline-flex;
+    align-items: center;
+    line-height: 1;
+}
+
+.theme-toggle svg {
+    display: block;
+}
+
+.theme-toggle:hover {
+    background: transparent;
+    transform: scale(1.15);
+}
+
+/* Dark mode */
+html.dark body {
+    background: hsl(45, 4%, 12%);
+    color: hsl(45, 5%, 78%);
+}
+
+html.dark h1,
+html.dark .produkt h3,
+html.dark .uzytkownik h3,
+html.dark .zamowienie h3 {
+    color: hsl(45, 5%, 92%);
+}
+
+html.dark form,
+html.dark .produkt,
+html.dark .uzytkownik,
+html.dark .zamowienie {
+    background: hsl(45, 4%, 18%);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+}
+
+html.dark .produkt p,
+html.dark .uzytkownik p,
+html.dark .zamowienie p {
+    color: hsl(45, 5%, 70%);
+}
+
+html.dark input,
+html.dark select {
+    background: hsl(45, 4%, 24%);
+    color: hsl(45, 5%, 88%);
+    border-color: hsl(45, 4%, 32%);
 }

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sklep - logowanie</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="theme.js"></script>
+</head>
+<body>
+    <h1>Logowanie do panelu</h1>
+
+    <form id="form" class="login-form">
+        <input type="email" id="email" placeholder="Email" required>
+        <input type="password" id="password" placeholder="Hasło" required>
+        <button type="submit">Zaloguj</button>
+        <p id="error" class="error"></p>
+    </form>
+
+    <script>
+        document.getElementById('form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const error = document.getElementById('error');
+            error.textContent = '';
+
+            const res = await fetch('/api/auth/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    email: document.getElementById('email').value,
+                    password: document.getElementById('password').value
+                })
+            });
+
+            if (res.ok) {
+                window.location.href = '/';
+            } else {
+                const data = await res.json();
+                error.textContent = data.message;
+            }
+        });
+    </script>
+</body>
+</html>
